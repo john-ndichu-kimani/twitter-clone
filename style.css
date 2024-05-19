@@ -1,0 +1,103 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    font-family: 'roboto',sans-serif;
+}
+.main{
+    width: 100vw;
+    height: 100vh;
+    background-color: whitesmoke;
+}
+.navbar{
+    background-color: rgb(63, 166, 251);
+    display: flex;
+    justify-content: space-around;
+    height: 15vh;
+    align-items: center;
+    color: #fff;
+}
+.hero{
+    width: 100vw;
+    height: 35vh;
+    background-image: url(/images/people-2923048_1280.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.user-profile{
+    margin-top:-80px ;
+    margin-left: 80px;
+
+    display: flex;
+    flex-direction: column;
+
+}
+.profile-img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: solid whitesmoke 3px;
+}
+
+#users{
+    padding: .8rem 8rem;
+    border: none;
+    outline: none;
+    
+}
+
+
+.location-wrapper{
+    display: flex;
+    gap: 20px;
+  
+ 
+}
+h2{
+    margin-bottom: 20px;
+}
+p{
+    margin-bottom: 5px;
+}
+
+ion-icon{
+    font-size: 25px;
+}
+.posts{
+    width: 100vw;
+    margin-top: 20px;
+    background-color: #fff;
+}
+.post-wrapper{
+    width: 90%;
+    margin: 0px auto;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(2,1fr);
+    padding: 20px;
+}
+.post-header{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    font-size: 12px;
+}
+.post-item{
+   
+    display: flex;
+    gap: 10px;
+    border: solid rgb(235, 234, 234) 1px;
+    padding: 15px;
+    border-radius: 5px;
+}
+.post-icon{
+    width: 20px;
+    height: 20px;
+}
+.icon-wrapper{
+    display: flex;
+    gap: 20px;
+}
