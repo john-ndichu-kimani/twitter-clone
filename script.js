@@ -1,162 +1,271 @@
-document.addEventListener('DOMContentLoaded', () => {
-    let userSelect = document.querySelector('#users');
-    let userProfile = document.querySelector('.user-profile');
-    let postWrapper = document.querySelector('.post-wrapper');
-    let posts = document.querySelector('.posts');
+document.addEventListener("DOMContentLoaded", async () => {
+    const userSelect = document.querySelector("#users");
+    const userProfile = document.querySelector(".user-profile");
+    const postWrapper = document.querySelector(".post-wrapper");
+    const commentsWrapper = document.querySelector(".comments");
 
-    const fetchAllUsers = (callback) => {
-        fetch(`https://jsonplaceholder.typicode.com/users`)
-            .then(response => response.json())
-            .then(users => callback(null, users))
-            .catch(error => callback(error, null));
+    const API_URL = 'https://jsonplaceholder.typicode.com';
+
+    const fetchAllUsers = async () => {
+        const response = await fetch(`${API_URL}/users`);
+        return response.json();
     };
 
-    const fetchSingleUser = (id) => {
-        return new Promise((resolve, reject) => {
-            fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
-                .then(response => response.json())
-                .then(user => resolve(user))
-                .catch(error => reject(error));
-        });
+    const fetchSingleUser = async (id) => {
+        const response = await fetch(`${API_URL}/users/${id}`);
+        return response.json();
     };
 
-    const fetchUserPosts = (userId) => {
-        return fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`)
-               .then(response => response.json());
-    }
-
-    const fetchPostDetails = (postId) => {
-        return fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
-               .then(response => response.json());
-    }
-
-    const allUsers = () => {
-        fetchAllUsers((error, users) => {
-            if (error) {
-                console.error('Error fetching users:', error);
-            } else {
-                users.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = user.name;
-                    
-                    if (user.id === 1) {
-                        option.selected = true;
-                    }
-
-                    userSelect.appendChild(option);
-                });
-
-                loadProfile(userSelect.value);
-            }
-        });
+    const fetchUserPosts = async (userId) => {
+        const response = await fetch(`${API_URL}/posts?userId=${userId}`);
+        return response.json();
     };
 
-    const loadProfile = (id) => {
-        userProfile.innerHTML = '';
-        postWrapper.innerHTML = '';
+    const fetchPostComments = async (postId) => {
+        const response = await fetch(`${API_URL}/comments?postId=${postId}`);
+        return response.json();
+    };
 
-        const image = document.createElement('img');
-        image.src = '/images/profile.png';
-        image.className = 'profile-img';
+    const allUsers = async () => {
+        try {
+            const users = await fetchAllUsers();
+            users.forEach(user => {
+                const option = document.createElement("option");
+                option.value = user.id;
+                option.textContent = user.name;
+                if (user.id === 1) {
+                    option.selected = true;
+                }
+                userSelect.appendChild(option);
+            });
+            await loadProfile(userSelect.value);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    const loadProfile = async (id) => {
+        userProfile.innerHTML = "";
+        postWrapper.innerHTML = "";
+        commentsWrapper.innerHTML = "";
+
+        const image = document.createElement("img");
+        image.src = "/images/profile.png";
+        image.className = "profile-img";
         userProfile.appendChild(image);
 
-        fetchSingleUser(id)
-            .then(userData => {
-                const nameLabel = document.createElement('h2');
-                nameLabel.textContent = userData.name;
-                userProfile.appendChild(nameLabel);
+        try {
+            const userData = await fetchSingleUser(id);
+            const nameLabel = document.createElement("h2");
+            nameLabel.textContent = userData.name;
+            userProfile.appendChild(nameLabel);
 
-                const usernameLabel = document.createElement('p');
-                usernameLabel.textContent = userData.username;
-                userProfile.appendChild(usernameLabel);
+            const usernameLabel = document.createElement("p");
+            usernameLabel.textContent = userData.username;
+            userProfile.appendChild(usernameLabel);
 
-                const websiteLabel = document.createElement('p');
-                websiteLabel.textContent = userData.website;
-                userProfile.appendChild(websiteLabel);
+            const websiteLabel = document.createElement("p");
+            websiteLabel.textContent = userData.website;
+            userProfile.appendChild(websiteLabel);
 
-                const phraseLabel = document.createElement('p');
-                phraseLabel.textContent = userData.company.catchPhrase;
-                userProfile.appendChild(phraseLabel);
+            const phraseLabel = document.createElement("p");
+            phraseLabel.textContent = userData.company.catchPhrase;
+            userProfile.appendChild(phraseLabel);
 
-                const location = document.createElement('div');
-                location.className = 'location-wrapper';
-                const locationImage = document.createElement('ion-icon');
-                locationImage.setAttribute('name', 'location');
-                locationImage.className = 'location-icon';
-                const locationLabel = document.createElement('p');
-                locationLabel.textContent = userData.address.city;
-                location.appendChild(locationImage);
-                location.appendChild(locationLabel);
-                userProfile.appendChild(location);
+            const location = document.createElement("div");
+            location.className = "location-wrapper";
+            const locationImage = document.createElement("ion-icon");
+            locationImage.setAttribute("name", "location");
+            locationImage.className = "location-icon";
+            const locationLabel = document.createElement("p");
+            locationLabel.textContent = userData.address.city;
+            location.appendChild(locationImage);
+            location.appendChild(locationLabel);
+            userProfile.appendChild(location);
 
-                return fetchUserPosts(userData.id);
-            })
-            .then(posts => {
-                 const postPromises = posts.map(post => fetchPostDetails(post.id));
-                 return Promise.all(postPromises);
-            })
-            .then(postDetails => {
-                postDetails.forEach(post => {
-                    const post_card = document.createElement('div');
-                    post_card.className = 'post-item';
+            const userPosts = await fetchUserPosts(userData.id);
 
+            userPosts.forEach(post => {
+                const postCard = document.createElement("div");
+                postCard.className = "post-card";
+                postCard.dataset.postId = post.id;
 
-                    const post_image = document.createElement('img');
-                    post_image.src="/images/profile.png";
-                    post_image.style.width='130px';
-                    post_image.style.height='100%';
-                    post_image.style.borderRadius='10px';
-                    post_card.appendChild(post_image);
+                const postImage = document.createElement("img");
+                postImage.src = "/images/profile.png";
+                postImage.className = "post-image";
+                postCard.appendChild(postImage);
+
+                const postHeader = document.createElement("div");
+                postHeader.className = "header";
+                const iconsWrapper = document.createElement('div');
+                iconsWrapper.className='icon-wrapper'
+                const postIcons = document.createElement("div");
+                const verified = document.createElement('img');
+                verified.className='icons';
+                verified.src='/images/verify.png';
+
+                const twitter = document.createElement('img');
+                twitter.className='icons';
+                twitter.src='/images/twitter.png';
                 
-                    
-                    const post_header = document.createElement('div');
-                    post_header.className = 'post-header';
-                    const post_title = document.createElement('h3');
-                    post_title.textContent = post.title;
-                    const post_header_icons = document.createElement('div');
-                    post_header_icons.className='icon-wrapper';
-                    
-                    post_header_icon1 = document.createElement('img');
-                    post_header_icon1.src=('/images/verify.png');
-                    post_header_icon1.className='post-icon';
-                    
-                   
+               
+                postIcons.appendChild(verified);
+                postIcons.appendChild(twitter);
+                iconsWrapper.appendChild(postIcons);
 
-                    post_header_icon2= document.createElement('img');
-                    post_header_icon2.src=('/images/twitter.png');
-                    post_header_icon2.className='post-icon';
-                   
+                const postAuthor = document.createElement("p");
+                postAuthor.textContent = `${userData.name}`;
 
-                    post_header_icons.appendChild(post_header_icon1);
-                    post_header_icons.appendChild(post_header_icon2);
-                   
-                    post_header.appendChild(post_title);
-                    post_header.appendChild(post_header_icons);
-    
+                postHeader.appendChild(postAuthor);
+                postHeader.appendChild(iconsWrapper);
+               
 
-                    const post_body = document.createElement('p');
-                    post_body.textContent = post.body;
+                const postBody = document.createElement("p");
+                postBody.textContent = post.body;
 
-                    const post_content = document.createElement('div');
-                    post_content.className='post-content';
+                const postFooter = document.createElement("div");
+                postFooter.className = "footer";
 
-                    post_content.appendChild(post_header);
-                    post_content.appendChild(post_body);
+                const messageReactions = document.createElement("div");
+                messageReactions.className = "msg-wrapper";
+                const msgImg = document.createElement("img");
+                msgImg.src = "/images/message.png";
+                msgImg.className = "icons";
+                const msgCount = document.createElement("p");
+                msgCount.textContent = "200";
+                messageReactions.appendChild(msgImg);
+                messageReactions.appendChild(msgCount);
 
-                    post_card.appendChild(post_content);
+                const repostReactions = document.createElement("div");
+                repostReactions.className = "repost-wrapper";
+                const repostImg = document.createElement("img");
+                repostImg.src = "/images/retweet.png";
+                repostImg.className = "icons";
+                const repostCount = document.createElement("p");
+                repostCount.textContent = "200";
+                repostReactions.appendChild(repostImg);
+                repostReactions.appendChild(repostCount);
 
-                    postWrapper.appendChild(post_card);
+                const likeReactions = document.createElement("div");
+                likeReactions.className = "like-wrapper";
+                const likeImg = document.createElement("img");
+                likeImg.src = "/images/heart.png";
+                likeImg.className = "icons";
+                const likeCount = document.createElement("p");
+                likeCount.textContent = "200";
+                likeReactions.appendChild(likeImg);
+                likeReactions.appendChild(likeCount);
 
-                    posts.appendChild(postWrapper);
-                });
-            })
-            .catch(error => console.error('Error loading profile:', error));
+                postFooter.appendChild(messageReactions);
+                postFooter.appendChild(repostReactions);
+                postFooter.appendChild(likeReactions);
+
+                const postContents = document.createElement('div');
+                postContents.className='post-content';
+
+                postContents.appendChild(postHeader);
+                postContents.appendChild(postBody);
+                postContents.appendChild(postFooter);
+
+              postCard.appendChild(postContents);
+                postWrapper.appendChild(postCard);
+
+                postCard.addEventListener("click", () => loadComments(post.id));
+            });
+
+            if (userPosts.length > 0) {
+                await loadComments(userPosts[0].id);
+            }
+
+        } catch (error) {
+            console.error("Error loading profile:", error);
+        }
     };
 
-    userSelect.addEventListener('change', () => {
-        loadProfile(userSelect.value);
+    const loadComments = async (postId) => {
+        commentsWrapper.innerHTML = "";
+        try {
+            const comments = await fetchPostComments(postId);
+            comments.forEach(comment => {
+                const commentCard = document.createElement("div");
+                commentCard.className = "comment-card";
+
+                const commentImage = document.createElement("img");
+                commentImage.src = "/images/profile.png";
+                commentImage.className = "post-image";
+                commentCard.appendChild(commentImage);
+
+                const commentHeader = document.createElement("div");
+                commentHeader.className = "post-header";
+
+                const commentTitle = document.createElement("p");
+                commentTitle.textContent = comment.name;
+
+               
+
+                commentHeader.appendChild(commentTitle);
+                
+
+                const commentBody = document.createElement("p");
+                commentBody.textContent = comment.body;
+                commentCard.appendChild(commentBody);
+
+
+                const commentFooter = document.createElement("div");
+                commentFooter.className = "footer";
+
+                const messageReactions = document.createElement("div");
+                messageReactions.className = "msg-wrapper";
+                const msgImg = document.createElement("img");
+                msgImg.src = "/images/message.png";
+                msgImg.className = "icons";
+                const msgCount = document.createElement("p");
+                msgCount.textContent = "0";
+                messageReactions.appendChild(msgImg);
+                messageReactions.appendChild(msgCount);
+
+                const repostReactions = document.createElement("div");
+                repostReactions.className = "repost-wrapper";
+                const repostImg = document.createElement("img");
+                repostImg.src = "/images/retweet.png";
+                repostImg.className = "icons";
+                const repostCount = document.createElement("p");
+                repostCount.textContent = "0";
+                repostReactions.appendChild(repostImg);
+                repostReactions.appendChild(repostCount);
+
+                const likeReactions = document.createElement("div");
+                likeReactions.className = "like-wrapper";
+                const likeImg = document.createElement("img");
+                likeImg.src = "/images/heart.png";
+                likeImg.className = "icons";
+                const likeCount = document.createElement("p");
+                likeCount.textContent = "0";
+                likeReactions.appendChild(likeImg);
+                likeReactions.appendChild(likeCount);
+
+                commentFooter.appendChild(messageReactions);
+                commentFooter.appendChild(repostReactions);
+                commentFooter.appendChild(likeReactions);
+
+                 const commentContents= document.createElement('div');
+                 commentContents.className='comment-content';
+
+                 commentContents.appendChild(commentHeader);
+                 commentContents.appendChild(commentBody);
+                 commentContents.appendChild(commentFooter);
+
+                commentCard.appendChild(commentContents);
+                commentsWrapper.appendChild(commentCard);
+            });
+        } catch (error) {
+            console.error("Error loading comments:", error);
+        }
+    };
+
+    userSelect.addEventListener("change", async () => {
+        await loadProfile(userSelect.value);
     });
 
-    allUsers();
+    await allUsers();
 });

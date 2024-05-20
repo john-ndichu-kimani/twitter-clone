@@ -4,25 +4,27 @@
     box-sizing: border-box;
 }
 body{
-    font-family: 'roboto',sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    font-size: 15px;
 }
 .main{
     width: 100vw;
-    height: 100vh;
+    height: 75vh;
     background-color: whitesmoke;
 }
 .navbar{
     background-color: rgb(63, 166, 251);
     display: flex;
     justify-content: space-around;
-    height: 15vh;
+    height: 10vh;
     align-items: center;
     color: #fff;
 }
 .hero{
     width: 100vw;
-    height: 35vh;
-    background-image: url(/images/people-2923048_1280.jpg);
+    height: 30vh;
+    background-image: url(/images/background.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -30,20 +32,19 @@ body{
 .user-profile{
     margin-top:-80px ;
     margin-left: 80px;
-
     display: flex;
     flex-direction: column;
 
 }
 .profile-img{
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     border: solid whitesmoke 3px;
 }
 
 #users{
-    padding: .8rem 8rem;
+    padding: .8rem 4rem;
     border: none;
     outline: none;
     
@@ -63,41 +64,68 @@ p{
     margin-bottom: 5px;
 }
 
-ion-icon{
-    font-size: 25px;
-}
 .posts{
-    width: 100vw;
-    margin-top: 20px;
-    background-color: #fff;
+    width: 50%;
+    height: 100vh;    
 }
-.post-wrapper{
-    width: 90%;
-    margin: 0px auto;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(2,1fr);
-    padding: 20px;
-}
-.post-header{
+.post-wrapper,.comment-wrapper{
     display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-    font-size: 12px;
+    flex-direction:column;
+    
 }
-.post-item{
-   
+
+.header{
     display: flex;
+    gap: 20px; 
+}
+
+.post-card,.comment-card{
+    display: flex;
+    padding: 30px;
     gap: 10px;
-    border: solid rgb(235, 234, 234) 1px;
-    padding: 15px;
-    border-radius: 5px;
+    cursor: pointer; 
+
 }
-.post-icon{
-    width: 20px;
-    height: 20px;
+.post-image{
+    width: 100px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 .icon-wrapper{
+    width: 100px;
     display: flex;
+}
+.posts-comments-wrapper{
+   margin: 20px auto;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding:0px 20px;
+   
+    
+}
+.comments{
+    width: 50%;
+    height: 100vh;
+    height: fit-content;
+}
+
+.footer{
+    display: flex;
+    align-items: center;
     gap: 20px;
 }
+.msg-wrapper,.repost-wrapper,.like-wrapper{
+    display: flex;
+    gap: 5px;
+}
+
+.icons{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+
+}
+
+
