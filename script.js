@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         postWrapper.innerHTML = '';
 
         const image = document.createElement('img');
-        image.src = '/images/little-egret-5826070_640.jpg';
+        image.src = '/images/profile.png';
         image.className = 'profile-img';
         userProfile.appendChild(image);
 
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
                     const post_image = document.createElement('img');
-                    post_image.src="/images/little-egret-5826070_640.jpg";
+                    post_image.src="/images/profile.png";
                     post_image.style.width='130px';
                     post_image.style.height='100%';
                     post_image.style.borderRadius='10px';
